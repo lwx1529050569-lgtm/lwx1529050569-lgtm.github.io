@@ -3,409 +3,316 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>拾光 · 小铺 | 中式复古</title>
-    <!-- 引入 Google Fonts 中的思源宋体，保证中式韵味 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500;700&display=swap" rel="stylesheet">
-    
+    <title>海与风的故事 · 纪念册</title>
+    <!-- 引入思源宋体，增加文艺感 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;700&display=swap" rel="stylesheet">
     <style>
-        /* --- 基础变量与重置 --- */
         :root {
-            --bg-color: #f4f0ea; /* 宣纸色 */
-            --text-main: #2b2b2b; /* 墨色 */
-            --text-light: #5e5e5e;
-            --accent-red: #b22c2c; /* 朱砂红 */
-            --accent-gold: #c5a065; /* 古铜金 */
-            --border-color: #3e3e3e;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: "Noto Serif SC", "Songti SC", serif; /* 核心：宋体/衬线体 */
-            line-height: 1.8;
-            overflow-x: hidden;
-        }
-
-        a { text-decoration: none; color: inherit; transition: 0.3s; }
-        ul { list-style: none; }
-
-        /* --- 布局容器 --- */
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 20px;
-            border-left: 1px solid rgba(0,0,0,0.05);
-            border-right: 1px solid rgba(0,0,0,0.05);
-            min-height: 100vh;
-            background-color: #fffbf5; /* 内容区稍微亮一点 */
-            box-shadow: 0 0 50px rgba(0,0,0,0.03);
-        }
-
-        /* --- 导航栏 --- */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 40px 0;
-            border-bottom: 2px solid var(--text-main);
-            margin-bottom: 60px;
-            position: relative;
+            --bg-overlay: rgba(0, 0, 0, 0.4);
         }
         
-        /* 装饰性双线 */
-        nav::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background-color: var(--text-main);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 40px;
-        }
-
-        .nav-links a {
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-        }
-
-        .nav-links a:hover {
-            color: var(--accent-red);
-        }
-
-        /* 竖排Logo */
-        .logo {
-            font-size: 2rem;
-            font-weight: 700;
-            writing-mode: vertical-rl; /* 竖向排版 */
-            text-orientation: upright;
-            letter-spacing: 10px;
-            border: 2px solid var(--accent-red);
-            padding: 15px 8px;
-            color: var(--accent-red);
-            user-select: none;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
             font-family: "Noto Serif SC", serif;
-        }
-
-        /* --- 顶部大图 (Hero) --- */
-        .hero {
-            text-align: center;
-            margin-bottom: 80px;
-        }
-
-        .hero-image-placeholder {
-            width: 100%;
-            height: 400px;
-            background-color: #e0dcd6;
+            overflow: hidden;
+            background: #000;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #8c8c8c;
-            font-size: 1.2rem;
-            border: 1px solid var(--border-color);
+            color: white;
+        }
+
+        /* 动态模糊背景 */
+        #bg-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            filter: blur(20px) brightness(0.6);
+            transition: background-image 1s ease-in-out;
+            z-index: 0;
+        }
+
+        /* 内容容器 */
+        .container {
             position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        /* 照片卡片 */
+        .photo-card {
+            width: 85%;
+            max-width: 400px;
+            aspect-ratio: 3/4;
+            background: #fff;
+            padding: 15px 15px 50px 15px; /* 下方留白像拍立得 */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform: rotate(-2deg) scale(0.9);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             overflow: hidden;
         }
 
-        /* 模拟图片上的遮罩纹理 */
-        .hero-image-placeholder::before {
-            content: '';
+        /* 图片本身 */
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: sepia(10%); /* 淡淡的复古滤镜 */
+        }
+
+        /* 激活状态（当前显示的照片） */
+        .photo-card.active {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+            z-index: 2;
+        }
+
+        /* 离场动画（滑走） */
+        .photo-card.prev {
+            transform: translateX(-150%) rotate(-10deg);
+            opacity: 0;
+        }
+        
+        /* 进场准备 */
+        .photo-card.next {
+            transform: translateX(150%) rotate(10deg);
+            opacity: 0;
+        }
+
+        /* 文字区域 */
+        .text-area {
             position: absolute;
-            top: 10px; left: 10px; right: 10px; bottom: 10px;
-            border: 1px solid rgba(255,255,255,0.5);
+            bottom: 10%;
+            width: 80%;
+            text-align: center;
+            z-index: 20;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            min-height: 60px;
         }
 
-        .hero-text {
-            margin-top: 40px;
+        .text-area h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+            letter-spacing: 2px;
         }
 
-        .hero-text h1 {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            letter-spacing: 5px;
-        }
-
-        .hero-text p {
-            color: var(--text-light);
-            font-size: 1rem;
+        .text-area p {
+            font-size: 0.9rem;
+            opacity: 0.8;
             font-style: italic;
         }
 
-        /* --- 关于店铺 --- */
-        .section-title {
-            text-align: center;
-            margin-bottom: 50px;
-            position: relative;
-            display: inline-block;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .section-title h2 {
-            font-size: 1.8rem;
-            letter-spacing: 3px;
-            z-index: 2;
-            position: relative;
-            background: #fffbf5;
-            padding: 0 20px;
-        }
-
-        /* 标题背后的横线装饰 */
-        .section-title::before {
-            content: '';
+        /* 音乐按钮 */
+        .music-btn {
             position: absolute;
-            top: 50%;
-            left: -50px;
-            width: calc(100% + 100px);
-            height: 1px;
-            background-color: var(--accent-gold);
-            z-index: 1;
-        }
-
-        .about {
-            text-align: center;
-            max-width: 600px;
-            margin: 0 auto 80px auto;
-            color: var(--text-light);
-        }
-
-        /* --- 商品展示 --- */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-bottom: 80px;
-        }
-
-        .product-card {
-            background: #fff;
-            padding: 15px;
-            border: 1px solid #e0e0e0;
-            transition: 0.3s;
-            text-align: center;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            border-color: var(--accent-gold);
-        }
-
-        .product-img {
-            width: 100%;
-            aspect-ratio: 3/4; /* 竖向比例 */
-            background-color: #ece8e1;
-            margin-bottom: 15px;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #999;
-            font-size: 0.9rem;
+            cursor: pointer;
+            z-index: 100;
+            animation: rotate 5s linear infinite;
+            animation-play-state: paused;
         }
-
-        .product-name {
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-            color: var(--text-main);
-        }
-
-        .product-price {
-            color: var(--accent-red);
-            font-weight: bold;
-            font-family: serif;
-        }
-
-        /* --- 底部印章按钮 --- */
-        .btn {
-            display: inline-block;
-            padding: 10px 30px;
-            border: 1px solid var(--text-main);
-            margin-top: 20px;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            transition: 0.3s;
-        }
-        .btn:hover {
-            background-color: var(--accent-red);
-            color: white;
-            border-color: var(--accent-red);
-        }
-
-        /* --- 页脚 --- */
-        footer {
-            text-align: center;
-            padding: 60px 0;
-            border-top: 1px solid #e0e0e0;
-            color: var(--text-light);
-            font-size: 0.9rem;
-        }
-
-        .vertical-line {
-            display: inline-block;
-            width: 1px;
-            height: 12px;
-            background: #ccc;
-            margin: 0 10px;
-        }
-
-        /* 简单的淡入动画 */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
+        .music-btn.playing {
+            animation-play-state: running;
+            border-color: #fff;
         }
         
-        /* 移动端适配 */
-        @media (max-width: 600px) {
-            nav {
-                flex-direction: column;
-                gap: 20px;
-            }
-            .logo {
-                writing-mode: horizontal-tb;
-                border: none;
-                border-bottom: 2px solid var(--accent-red);
-            }
-            .hero-text h1 {
-                font-size: 1.8rem;
-            }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 提示点击 */
+        .hint {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.8rem;
+            opacity: 0.5;
+            animation: bounce 2s infinite;
+            z-index: 10;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- 导航栏 -->
-        <nav class="fade-in">
-            <div class="nav-links">
-                <a href="#">首页</a>
-                <a href="#">良品</a>
-            </div>
-            
-            <!-- 你的店铺名字 -->
-            <div class="logo">拾光铺子</div>
-            
-            <div class="nav-links">
-                <a href="#">故事</a>
-                <a href="#">联系</a>
-            </div>
-        </nav>
+    <!-- 背景层 -->
+    <div id="bg-layer"></div>
 
-        <!-- 顶部海报区 -->
-        <header class="hero fade-in">
-            <div class="hero-image-placeholder">
-                <!-- 此处未来放入一张具有古风意境的横图 -->
-                [ 顶部氛围图 / 留白 ]
-            </div>
-            <div class="hero-text">
-                <h1>岁 月 静 好</h1>
-                <p>在这里，寻回失落的东方美学。</p>
-            </div>
-        </header>
+    <!-- 音乐开关 (图标是音符) -->
+    <div class="music-btn" id="music-btn" onclick="toggleMusic()">🎵</div>
+    <audio id="bg-music" loop>
+        <!-- 这里需要放一个 mp3 地址，或者你可以放本地的 music.mp3 -->
+        <!-- 暂时用一个在线的纯音乐外链作为演示 -->
+        <source src="https://music.163.com/song/media/outer/url?id=1824045032.mp3" type="audio/mpeg">
+    </audio>
 
-        <!-- 关于部分 -->
-        <section class="about fade-in">
-            <div class="section-title">
-                <h2>关于小铺</h2>
-            </div>
-            <p>
-                这是一家贩卖旧时光的小店。<br><br>
-                我们致力于寻找那些散落在时间长河里的传统手工艺。<br>
-                一茶一饭，一器一物，皆是生活。<br>
-                愿你在这里，找到属于你的那份宁静。
-            </p>
-            <a href="#" class="btn">阅读更多</a>
-        </section>
+    <div class="container" onclick="nextSlide()">
+        <!-- 这里的 src="images/p1.jpg" 记得要确保你有这些图片文件 -->
+        
+        <!-- 第1页 -->
+        <div class="photo-card active" data-text="那年夏天，风很温柔" data-sub="跨海大桥见证了我们的相遇">
+            <img src="images/p1.jpg" alt="Photo 1">
+        </div>
 
-        <!-- 商品列表 -->
-        <section class="products fade-in">
-            <div class="section-title">
-                <h2>当季甄选</h2>
-            </div>
-            
-            <div class="products-grid">
-                <!-- 商品 1 -->
-                <div class="product-card">
-                    <div class="product-img">[ 商品图片 1 ]</div>
-                    <h3 class="product-name">手工紫砂壶</h3>
-                    <p class="product-price">¥ 680.00</p>
-                </div>
+        <!-- 第2页 -->
+        <div class="photo-card next" data-text="追逐阳光" data-sub="单车车轮转动着青春的频率">
+            <img src="images/p2.jpg" alt="Photo 2">
+        </div>
 
-                <!-- 商品 2 -->
-                <div class="product-card">
-                    <div class="product-img">[ 商品图片 2 ]</div>
-                    <h3 class="product-name">青花瓷茶杯</h3>
-                    <p class="product-price">¥ 128.00</p>
-                </div>
+        <!-- 第3页 -->
+        <div class="photo-card next" data-text="听海" data-sub="海浪会记得每一个心愿">
+            <img src="images/p4.jpg" alt="Photo 3">
+        </div>
 
-                <!-- 商品 3 -->
-                <div class="product-card">
-                    <div class="product-img">[ 商品图片 3 ]</div>
-                    <h3 class="product-name">苏绣团扇</h3>
-                    <p class="product-price">¥ 360.00</p>
-                </div>
+        <!-- 第4页 -->
+        <div class="photo-card next" data-text="凝视" data-sub="世界很大，但此刻只有这片海">
+            <img src="images/p3.jpg" alt="Photo 4">
+        </div>
+        
+        <!-- 第5页 -->
+        <div class="photo-card next" data-text="光影斑驳" data-sub="树荫下藏着说不完的话">
+            <img src="images/p5.jpg" alt="Photo 5">
+        </div>
 
-                <!-- 商品 4 -->
-                <div class="product-card">
-                    <div class="product-img">[ 商品图片 4 ]</div>
-                    <h3 class="product-name">沉香线香</h3>
-                    <p class="product-price">¥ 98.00</p>
-                </div>
-            </div>
-        </section>
+        <!-- 第6页 -->
+        <div class="photo-card next" data-text="那个少年" data-sub="镜头背后的目光，比海风更深情">
+            <img src="images/p6.jpg" alt="Photo 6">
+        </div>
 
-        <!-- 页脚 -->
-        <footer class="fade-in">
-            <p>拾光铺子 &copy; 2023</p>
-            <br>
-            <p>
-                新浪微博
-                <span class="vertical-line"></span>
-                小红书
-                <span class="vertical-line"></span>
-                微信公众号
-            </p>
-        </footer>
+        <!-- 第7页 -->
+        <div class="photo-card next" data-text="未完待续" data-sub="故事还在继续...">
+            <img src="images/p7.jpg" alt="Photo 7">
+        </div>
+
+        <!-- 文字显示区 -->
+        <div class="text-area">
+            <h2 id="main-text"></h2>
+            <p id="sub-text"></p>
+        </div>
+
+        <div class="hint">点击屏幕 切换下一张</div>
     </div>
 
     <script>
-        // 简单的滚动出现动画脚本
-        document.addEventListener('DOMContentLoaded', () => {
-            const observerOptions = {
-                threshold: 0.1
-            };
+        const cards = document.querySelectorAll('.photo-card');
+        const bgLayer = document.getElementById('bg-layer');
+        const mainText = document.getElementById('main-text');
+        const subText = document.getElementById('sub-text');
+        const musicBtn = document.getElementById('music-btn');
+        const audio = document.getElementById('bg-music');
+        
+        let currentIndex = 0;
+        let isTyping = false;
 
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, observerOptions);
+        // 初始化第一张
+        updateContent(0);
 
-            document.querySelectorAll('.fade-in').forEach(el => {
-                observer.observe(el);
+        function nextSlide() {
+            if (currentIndex >= cards.length - 1) {
+                // 如果是最后一张，可以选择重头开始，或者这就结束
+                // 这里我们做循环播放
+                resetSlides();
+                currentIndex = 0;
+            } else {
+                cards[currentIndex].classList.remove('active');
+                cards[currentIndex].classList.add('prev');
+                
+                currentIndex++;
+                cards[currentIndex].classList.remove('next');
+                cards[currentIndex].classList.add('active');
+            }
+            updateContent(currentIndex);
+        }
+
+        function resetSlides() {
+            cards.forEach((card, index) => {
+                card.classList.remove('prev', 'active');
+                if(index === 0) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.add('next');
+                }
             });
-        });
+        }
+
+        function updateContent(index) {
+            const card = cards[index];
+            const imgUrl = card.querySelector('img').src;
+            const text = card.getAttribute('data-text');
+            const sub = card.getAttribute('data-sub');
+
+            // 1. 更新模糊背景
+            bgLayer.style.backgroundImage = `url(${imgUrl})`;
+
+            // 2. 打字机效果显示文字
+            typeWriter(text, sub);
+        }
+
+        // 打字机特效
+        function typeWriter(text1, text2) {
+            mainText.innerHTML = '';
+            subText.innerHTML = '';
+            
+            let i = 0;
+            // 先打标题
+            function typeTitle() {
+                if (i < text1.length) {
+                    mainText.innerHTML += text1.charAt(i);
+                    i++;
+                    setTimeout(typeTitle, 100);
+                } else {
+                    // 标题打完，打副标题
+                    let j = 0;
+                    function typeSub() {
+                        if (j < text2.length) {
+                            subText.innerHTML += text2.charAt(j);
+                            j++;
+                            setTimeout(typeSub, 50);
+                        }
+                    }
+                    typeSub();
+                }
+            }
+            typeTitle();
+        }
+
+        // 音乐控制
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                musicBtn.classList.add('playing');
+            } else {
+                audio.pause();
+                musicBtn.classList.remove('playing');
+            }
+        }
     </script>
-
 </body>
-
 </html>
