@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拾光 · 小铺 | 中式复古</title>
+    <!-- 引入 Google Fonts 中的思源宋体，保证中式韵味 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- 基础变量与重置 --- */
+        :root {
+            --bg-color: #f4f0ea; /* 宣纸色 */
+            --text-main: #2b2b2b; /* 墨色 */
+            --text-light: #5e5e5e;
+            --accent-red: #b22c2c; /* 朱砂红 */
+            --accent-gold: #c5a065; /* 古铜金 */
+            --border-color: #3e3e3e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: "Noto Serif SC", "Songti SC", serif; /* 核心：宋体/衬线体 */
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+
+        /* --- 布局容器 --- */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+            border-left: 1px solid rgba(0,0,0,0.05);
+            border-right: 1px solid rgba(0,0,0,0.05);
+            min-height: 100vh;
+            background-color: #fffbf5; /* 内容区稍微亮一点 */
+            box-shadow: 0 0 50px rgba(0,0,0,0.03);
+        }
+
+        /* --- 导航栏 --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 0;
+            border-bottom: 2px solid var(--text-main);
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        /* 装饰性双线 */
+        nav::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: var(--text-main);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-red);
+        }
+
+        /* 竖排Logo */
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            writing-mode: vertical-rl; /* 竖向排版 */
+            text-orientation: upright;
+            letter-spacing: 10px;
+            border: 2px solid var(--accent-red);
+            padding: 15px 8px;
+            color: var(--accent-red);
+            user-select: none;
+            font-family: "Noto Serif SC", serif;
+        }
+
+        /* --- 顶部大图 (Hero) --- */
+        .hero {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .hero-image-placeholder {
+            width: 100%;
+            height: 400px;
+            background-color: #e0dcd6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #8c8c8c;
+            font-size: 1.2rem;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 模拟图片上的遮罩纹理 */
+        .hero-image-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .hero-text {
+            margin-top: 40px;
+        }
+
+        .hero-text h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            letter-spacing: 5px;
+        }
+
+        .hero-text p {
+            color: var(--text-light);
+            font-size: 1rem;
+            font-style: italic;
+        }
+
+        /* --- 关于店铺 --- */
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title h2 {
+            font-size: 1.8rem;
+            letter-spacing: 3px;
+            z-index: 2;
+            position: relative;
+            background: #fffbf5;
+            padding: 0 20px;
+        }
+
+        /* 标题背后的横线装饰 */
+        .section-title::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -50px;
+            width: calc(100% + 100px);
+            height: 1px;
+            background-color: var(--accent-gold);
+            z-index: 1;
+        }
+
+        .about {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 80px auto;
+            color: var(--text-light);
+        }
+
+        /* --- 商品展示 --- */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+
+        .product-card {
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            transition: 0.3s;
+            text-align: center;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            border-color: var(--accent-gold);
+        }
+
+        .product-img {
+            width: 100%;
+            aspect-ratio: 3/4; /* 竖向比例 */
+            background-color: #ece8e1;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .product-name {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: var(--text-main);
+        }
+
+        .product-price {
+            color: var(--accent-red);
+            font-weight: bold;
+            font-family: serif;
+        }
+
+        /* --- 底部印章按钮 --- */
+        .btn {
+            display: inline-block;
+            padding: 10px 30px;
+            border: 1px solid var(--text-main);
+            margin-top: 20px;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+        .btn:hover {
+            background-color: var(--accent-red);
+            color: white;
+            border-color: var(--accent-red);
+        }
+
+        /* --- 页脚 --- */
+        footer {
+            text-align: center;
+            padding: 60px 0;
+            border-top: 1px solid #e0e0e0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .vertical-line {
+            display: inline-block;
+            width: 1px;
+            height: 12px;
+            background: #ccc;
+            margin: 0 10px;
+        }
+
+        /* 简单的淡入动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 600px) {
+            nav {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .logo {
+                writing-mode: horizontal-tb;
+                border: none;
+                border-bottom: 2px solid var(--accent-red);
+            }
+            .hero-text h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 导航栏 -->
+        <nav class="fade-in">
+            <div class="nav-links">
+                <a href="#">首页</a>
+                <a href="#">良品</a>
+            </div>
+            
+            <!-- 你的店铺名字 -->
+            <div class="logo">拾光铺子</div>
+            
+            <div class="nav-links">
+                <a href="#">故事</a>
+                <a href="#">联系</a>
+            </div>
+        </nav>
+
+        <!-- 顶部海报区 -->
+        <header class="hero fade-in">
+            <div class="hero-image-placeholder">
+                <!-- 此处未来放入一张具有古风意境的横图 -->
+                [ 顶部氛围图 / 留白 ]
+            </div>
+            <div class="hero-text">
+                <h1>岁 月 静 好</h1>
+                <p>在这里，寻回失落的东方美学。</p>
+            </div>
+        </header>
+
+        <!-- 关于部分 -->
+        <section class="about fade-in">
+            <div class="section-title">
+                <h2>关于小铺</h2>
+            </div>
+            <p>
+                这是一家贩卖旧时光的小店。<br><br>
+                我们致力于寻找那些散落在时间长河里的传统手工艺。<br>
+                一茶一饭，一器一物，皆是生活。<br>
+                愿你在这里，找到属于你的那份宁静。
+            </p>
+            <a href="#" class="btn">阅读更多</a>
+        </section>
+
+        <!-- 商品列表 -->
+        <section class="products fade-in">
+            <div class="section-title">
+                <h2>当季甄选</h2>
+            </div>
+            
+            <div class="products-grid">
+                <!-- 商品 1 -->
+                <div class="product-card">
+                    <div class="product-img">[ 商品图片 1 ]</div>
+                    <h3 class="product-name">手工紫砂壶</h3>
+                    <p class="product-price">¥ 680.00</p>
+                </div>
+
+                <!-- 商品 2 -->
+                <div class="product-card">
+                    <div class="product-img">[ 商品图片 2 ]</div>
+                    <h3 class="product-name">青花瓷茶杯</h3>
+                    <p class="product-price">¥ 128.00</p>
+                </div>
+
+                <!-- 商品 3 -->
+                <div class="product-card">
+                    <div class="product-img">[ 商品图片 3 ]</div>
+                    <h3 class="product-name">苏绣团扇</h3>
+                    <p class="product-price">¥ 360.00</p>
+                </div>
+
+                <!-- 商品 4 -->
+                <div class="product-card">
+                    <div class="product-img">[ 商品图片 4 ]</div>
+                    <h3 class="product-name">沉香线香</h3>
+                    <p class="product-price">¥ 98.00</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="fade-in">
+            <p>拾光铺子 &copy; 2023</p>
+            <br>
+            <p>
+                新浪微博
+                <span class="vertical-line"></span>
+                小红书
+                <span class="vertical-line"></span>
+                微信公众号
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 简单的滚动出现动画脚本
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+
+</body>
+</html>
